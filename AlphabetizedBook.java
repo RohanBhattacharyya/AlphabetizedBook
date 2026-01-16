@@ -1,6 +1,9 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.io.File;
 import java.util.Scanner;
+
+// requires the book to be in proper original Gutenberg format (just download it from the site, do not clean it)
 
 public class AlphabetizedBook {
     private String title;
@@ -8,7 +11,7 @@ public class AlphabetizedBook {
     private ArrayList<String> words; // unique and alphabetized
     private ArrayList<Integer> counts; // parallel to words
 
-    public AlphabetizedBook(String fileName) throws Exception {
+    public AlphabetizedBook(String fileName) throws IOException {
         words = new ArrayList<String>();
         counts = new ArrayList<Integer>();
         Scanner s = new Scanner(new File(fileName));
@@ -25,7 +28,7 @@ public class AlphabetizedBook {
                 if (line.length() >= 34 && line.substring(0, 34).equals("*** START OF THE PROJECT GUTENBERG")) {
                     reachedStart = true;
                 }
-            } else if (line.length() > 0) {
+            } else {
                 if (line.length() >= 32 && line.substring(0, 32).equals("*** END OF THE PROJECT GUTENBERG")) {
                     break;
                 }
@@ -34,13 +37,8 @@ public class AlphabetizedBook {
                     if (w.length() > 0) {
                         if (!this.words.contains(w)) {
                             int loc = this.findAlphaLoc(w);
-                            if (loc >= this.words.size()) {
-                                this.words.add(w);
-                                this.counts.add(1);
-                            } else {
-                                this.words.add(loc, w);
-                                this.counts.add(loc, 1);
-                            }
+                            this.words.add(loc, w);
+                            this.counts.add(loc, 1);
                         } else {
                             this.counts.set(this.words.indexOf(w), this.counts.get(this.words.indexOf(w)) + 1);
                         }
@@ -54,7 +52,6 @@ public class AlphabetizedBook {
 
     // finds spot to insert a word in alphabetical order
     private int findAlphaLoc(String word) {
-        // ["a","b","c","d"]
         for (int i = 0; i < this.words.size(); i++) {
             if (this.words.get(i).compareTo(word) > 0) {
                 return i;
@@ -62,4 +59,6 @@ public class AlphabetizedBook {
         }
         return this.words.size();
     }
+
+    // add your methods below
 }
